@@ -23,8 +23,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        userTools = new UserTools(this);
         super.onCreate(savedInstanceState);
+        userTools = new UserTools(this);
+        userTools.addNewUser("user@user.pl","user");
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -64,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
     private void clickLogonButton(){
         EditText emailEdit = findViewById(R.id.emailEdit);
         EditText passwordEdit = findViewById(R.id.passwordEdit);
-        passwordEdit.getText().toString();
         if(!passwordEdit.getText().toString().isEmpty() && !emailEdit.getText().toString().isEmpty())
         {
             logedUser = userTools.findUserByLoginAndPassword(emailEdit.getText().toString(), User.hashPassword(passwordEdit.getText().toString())) ;
@@ -85,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, UserPanelActivity.class);
             intent.putExtra("loged_user", logedUser);
             startActivity(intent);
-            finish();
         }
     }
 }
