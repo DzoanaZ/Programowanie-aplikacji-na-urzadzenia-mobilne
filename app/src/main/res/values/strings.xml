@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">CarRentalBeaverAndroid</string>
+    <string name="action_settings">Settings</string>
+    <string name="login">Logowanie</string>
+    <string name="email">E-mail</string>
+    <string name="password">Hasło</string>
+    <string name="logon">Zaloguj</string>
+</resources>
