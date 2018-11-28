@@ -3,8 +3,10 @@ package com.rental.car.carrentalbeaverandroid;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,11 +27,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         userTools = new UserTools(this);
-        userTools.addNewUser("user@user.pl","user");
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        this.logon();
     }
 
     @Override
@@ -63,28 +63,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void clickLogonButton(){
+
         EditText emailEdit = findViewById(R.id.emailEdit);
         EditText passwordEdit = findViewById(R.id.passwordEdit);
         if(!passwordEdit.getText().toString().isEmpty() && !emailEdit.getText().toString().isEmpty())
         {
             logedUser = userTools.findUserByLoginAndPassword(emailEdit.getText().toString(), User.hashPassword(passwordEdit.getText().toString())) ;
-            logon();
         }
-        else
-        {
-            List<User> allUsers = userTools.getAllUsers();
-            for(User user : allUsers)
-            {
-                System.out.println(user.getUserId() + " "  +user.getEmail());
-            }
-        }
+        this.logon();
     }
 
     private void logon(){
         if(logedUser!=null) {
+            Log.d("Logon", "Found loged user");
             Intent intent = new Intent(MainActivity.this, UserPanelActivity.class);
             intent.putExtra("loged_user", logedUser);
             startActivity(intent);
+        }
+        else {
+            Snackbar.make(findViewById(R.id.logonButton), "Błędny login lub hasło.", Snackbar.LENGTH_LONG)
+                    .show();
+            List<User> allUsers = userTools.getAllUsers();
+            for(User user : allUsers)
+            {
+                Log.d("DATA",user.getUserId() + " "  +user.getEmail());
+            }
         }
     }
 }

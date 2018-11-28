@@ -24,15 +24,9 @@ public class UserPanelActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event)  {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
             Log.d("CDA", "onKeyDown Called");
-             onBackPressed();
         }
-
        return super.onKeyDown(keyCode, event);
     }
 
-    public void onBackPressed() {
-        Log.d("CDA", "onBackPressed Called");
 
-        return;
-    }
 }
