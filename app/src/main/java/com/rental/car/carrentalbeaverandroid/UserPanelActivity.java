@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.rental.car.carrentalbeaverandroid.models.User;
@@ -29,4 +31,17 @@ public class UserPanelActivity extends AppCompatActivity {
     }
 
 
+    public void click(View view) {
+        switch(view.getId()){
+            case R.id.newOrderButton:
+                newOrderButtonClick((Button)view);
+                break;
+            case R.id.myOrdersButton:
+                break;
+        }
+    }
+
+    private void newOrderButtonClick(Button button){
+
+    }
 }

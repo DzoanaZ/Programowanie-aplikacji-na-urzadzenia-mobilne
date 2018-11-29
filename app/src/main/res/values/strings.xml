@@ -5,4 +5,6 @@
     <string name="email">E-mail</string>
     <string name="password">Hasło</string>
     <string name="logon">Zaloguj</string>
+    <string name="newOrder">Nowe zamówienie</string>
+    <string name="myOrders">Moje zamówienia</string>
 </resources>
