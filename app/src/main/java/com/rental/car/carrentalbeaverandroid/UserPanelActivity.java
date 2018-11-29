@@ -1,6 +1,7 @@
 package com.rental.car.carrentalbeaverandroid;
 
-import android.content.Intent;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,10 +13,16 @@ import android.widget.TextView;
 import com.rental.car.carrentalbeaverandroid.models.Car;
 import com.rental.car.carrentalbeaverandroid.models.User;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class UserPanelActivity extends AppCompatActivity {
 
     private User logedUser;
     private CarTools carTools;
+    private String[] carsNames;
+    private int selectedCarId=-1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +51,46 @@ public class UserPanelActivity extends AppCompatActivity {
         }
     }
 
-    private void newOrderButtonClick(Button button){
-        for (Car car : carTools.getAllCars())
+    public void newOrderButtonClick(Button button){
+        Map<Integer, String> carsMap = new HashMap<>();
+        List<Car> listCars =  carTools.getAllCars();
+        for (Car car : listCars)
         {
-            Log.d("CAR",car.getCarId() + " "+ car.getCarName() + " " +car.getCarPrice().toString()+" zł ");
+            carsMap.put(car.getCarId(), car.getCarName() + " " +car.getCarPrice().toString()+"zł");
         }
+
+        carsNames = carsMap.values().toArray(new String[carsMap.values().size()]);
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+        mBuilder.setTitle("Wybierz samochód");
+        mBuilder.setIcon(R.drawable.car_icon);
+        mBuilder.setSingleChoiceItems(carsNames, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                for(Map.Entry<Integer, String> entry : carsMap.entrySet()){
+                    if(entry.getValue().equals( carsNames[which])){
+                        selectedCarId = entry.getKey();
+                    }
+                }
+                if(selectedCarId>-1) {
+                    Car selectedCar = carTools.findCarById(selectedCarId);
+                    Log.d("DIALOG", "Selected car: " + selectedCar.toString());
+                }
+                else
+                    Log.e("DIALOG", "Error during selecting car.");
+
+                dialog.dismiss();
+            }
+        });
+
+        mBuilder.setNegativeButton("Anuluj", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        AlertDialog mDialog = mBuilder.create();
+        mDialog.show();
+
     }
 }

@@ -10,7 +10,7 @@ import com.rental.car.carrentalbeaverandroid.models.User;
 public class DatabaseConfig extends SQLiteOpenHelper {
 
     public DatabaseConfig(Context context){
-        super(context, "moja-baza.db",null,4);
+        super(context, "moja-baza.db",null,5);
 
     }
 
@@ -30,11 +30,11 @@ public class DatabaseConfig extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if(oldVersion<2) {
+        if(oldVersion<5) {
             db.execSQL("DROP TABLE users;");
             onCreate(db);
-        }
-        if(oldVersion<3){
+//        }
+//        if(oldVersion<3){
             db.execSQL("CREATE UNIQUE INDEX user_email_unique_index ON users(user_email)");
 
             db.execSQL("CREATE TABLE cars (" +
@@ -54,9 +54,9 @@ public class DatabaseConfig extends SQLiteOpenHelper {
                     " FOREIGN KEY (order_car) REFERENCES cars (car_id) " +
                     " ON DELETE CASCADE ON UPDATE NO ACTION" +
                     ")");
-        }
-
-        if(oldVersion<4){
+//        }
+//
+//        if(oldVersion<4){
             enterCar(db,"Opel Corsa C 2003 1.2", 115.99);
             enterCar(db,"Audi A3 1.9 TDI", 155.50);
             enterCar(db,"Fiat Panda", 85.00);

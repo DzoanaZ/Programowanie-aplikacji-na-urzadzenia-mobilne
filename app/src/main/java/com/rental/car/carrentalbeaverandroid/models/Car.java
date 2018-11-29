@@ -42,4 +42,9 @@ public class Car implements Serializable {
     public void setCarPrice(BigDecimal carPrice) {
         this.carPrice = carPrice;
     }
+
+    @Override
+    public String toString() {
+        return  carId + " " + carName + " " + carPrice + "zł";
+    }
 }
