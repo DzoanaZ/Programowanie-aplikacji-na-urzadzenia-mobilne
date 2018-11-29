@@ -75,10 +75,12 @@ public class UserTools {
                 new String[]{String.valueOf(userId)},
                 null, null, null, null);
 
-        if(cursor!=null)
+        User user = null;
+        if(cursor!=null) {
             cursor.moveToFirst();
+            user = new User(cursor.getInt(0), cursor.getString(1), cursor.getString(2));
+        }
 
-        User user = new User(cursor.getInt(0), cursor.getString(1), cursor.getString(2));
         db.close();
         return user;
     }
