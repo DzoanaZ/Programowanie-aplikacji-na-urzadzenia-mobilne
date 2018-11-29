@@ -9,15 +9,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.rental.car.carrentalbeaverandroid.models.Car;
 import com.rental.car.carrentalbeaverandroid.models.User;
 
 public class UserPanelActivity extends AppCompatActivity {
 
     private User logedUser;
+    private CarTools carTools;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        carTools = new CarTools(this);
         setContentView(R.layout.activity_user_panel);
         logedUser = (User)getIntent().getParcelableExtra("loged_user");
         ((TextView)findViewById(R.id.textView)).setText("Hello " + logedUser.getEmail() + "!");
@@ -42,6 +45,9 @@ public class UserPanelActivity extends AppCompatActivity {
     }
 
     private void newOrderButtonClick(Button button){
-
+        for (Car car : carTools.getAllCars())
+        {
+            Log.d("CAR",car.getCarId() + " "+ car.getCarName() + " " +car.getCarPrice().toString()+" zł ");
+        }
     }
 }
