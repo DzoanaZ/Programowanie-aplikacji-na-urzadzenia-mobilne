@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -58,6 +59,15 @@ public class MainActivity extends AppCompatActivity {
         switch(view.getId()) {
             case R.id.logonButton :
                 clickLogonButton();
+                break;
+        }
+    }
+
+    public void onButtonClick(View view) {
+        switch(view.getId()) {
+            case R.id.signupButton :
+                Intent i = new Intent(MainActivity.this, SignUp.class);
+                startActivity(i);
                 break;
         }
     }
