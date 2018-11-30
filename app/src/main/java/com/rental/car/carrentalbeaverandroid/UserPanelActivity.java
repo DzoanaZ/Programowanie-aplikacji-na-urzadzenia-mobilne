@@ -1,6 +1,9 @@
 package com.rental.car.carrentalbeaverandroid;
 
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,89 +11,183 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rental.car.carrentalbeaverandroid.models.Car;
+import com.rental.car.carrentalbeaverandroid.models.Order;
 import com.rental.car.carrentalbeaverandroid.models.User;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class UserPanelActivity extends AppCompatActivity {
 
-    private User logedUser;
+    private OrderTools orderTools;
     private CarTools carTools;
-    private String[] carsNames;
-    private int selectedCarId=-1;
+    DatePickerDialog datePickerDialogRent;
+    DatePickerDialog datePickerDialogReturn;
 
+    private User logedUser;
+    private Car selectedCar;
+    private String[] carsNames;
+    private int selectedCarId = -1;
+    private Map<Integer, String> carsMap;
+
+    private Date orderStartDate;
+    private Date orderEndDate;
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        carTools = new CarTools(this);
         setContentView(R.layout.activity_user_panel);
-        logedUser = (User)getIntent().getParcelableExtra("loged_user");
-        ((TextView)findViewById(R.id.textView)).setText("Hello " + logedUser.getEmail() + "!");
-    }
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)  {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            Log.d("CDA", "onKeyDown Called");
-        }
-       return super.onKeyDown(keyCode, event);
-    }
 
+        logedUser = (User) getIntent().getParcelableExtra("loged_user");
+        ((TextView) findViewById(R.id.textView)).setText("Hello " + logedUser.getEmail() + "!");
+
+        carTools = new CarTools(this);
+        orderTools = new OrderTools(this);
+
+        Calendar dateOfRent = Calendar.getInstance();
+        int rentYear = dateOfRent.get(Calendar.YEAR);
+        int rentMonth = dateOfRent.get(Calendar.MONTH);
+        int rentDay = dateOfRent.get(Calendar.DAY_OF_MONTH);
+
+        datePickerDialogRent = new DatePickerDialog(
+                UserPanelActivity.this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                Log.d("DATEPICKER", "Rental date: " + year + "/" + month + "/" + dayOfMonth);
+                if (year > 0 && month > -1 && dayOfMonth > 0) {
+                    orderStartDate = OrderTools.convertStringToDate(year + "-" + month+1 + "-" + dayOfMonth);
+                }
+            }
+        }, rentYear, rentMonth, rentDay);
+        datePickerDialogRent.setTitle("Wybierz datę wypożyczenia");
+        datePickerDialogRent.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if (orderStartDate != null) {
+                    datePickerDialogReturn.show();
+                }
+            }
+        });
+
+
+        datePickerDialogReturn = new DatePickerDialog(
+                UserPanelActivity.this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                Log.d("DATEPICKER", "Return date: " + year + "/" + month + "/" + dayOfMonth);
+                if (year > 0 && month > -1 && dayOfMonth > 0) {
+                    orderEndDate = OrderTools.convertStringToDate(year + "-" + month+1 + "-" + dayOfMonth);
+                } else {
+                    orderStartDate = null;
+                }
+            }
+        }, rentYear, rentMonth, rentDay);
+        datePickerDialogReturn.setTitle("Wybierz datę zwrotu");
+        datePickerDialogReturn.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if (orderStartDate != null && orderEndDate != null) {
+                    Log.d("datePickerDialogReturn", "onDismiss() Before createNewOrder()");
+                    createNewOrder();
+                } else {
+                    orderStartDate = null;
+                    orderEndDate = null;
+                }
+            }
+        });
+    } //END onCreate()
 
     public void click(View view) {
-        switch(view.getId()){
+        switch (view.getId()) {
             case R.id.newOrderButton:
-                newOrderButtonClick((Button)view);
+                newOrderButtonClick((Button) view);
                 break;
             case R.id.myOrdersButton:
+                myOrdersButtonClick((Button) view);
                 break;
         }
     }
 
-    public void newOrderButtonClick(Button button){
-        Map<Integer, String> carsMap = new HashMap<>();
-        List<Car> listCars =  carTools.getAllCars();
-        for (Car car : listCars)
-        {
-            carsMap.put(car.getCarId(), car.getCarName() + " " +car.getCarPrice().toString()+"zł");
-        }
+    private void myOrdersButtonClick(Button view) {
+    }
 
-        carsNames = carsMap.values().toArray(new String[carsMap.values().size()]);
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
-        mBuilder.setTitle("Wybierz samochód");
-        mBuilder.setIcon(R.drawable.car_icon);
-        mBuilder.setSingleChoiceItems(carsNames, -1, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                for(Map.Entry<Integer, String> entry : carsMap.entrySet()){
-                    if(entry.getValue().equals( carsNames[which])){
-                        selectedCarId = entry.getKey();
+    public void newOrderButtonClick(Button button) {
+        initialCarsMapAndNames();
+
+        if (carsNames.length > 0) {
+            AlertDialog.Builder selectCarDialogBuilder = new AlertDialog.Builder(this);
+            selectCarDialogBuilder.setTitle("Wybierz samochód");
+            selectCarDialogBuilder.setIcon(R.drawable.car_icon);
+            selectCarDialogBuilder.setSingleChoiceItems(carsNames, -1, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    for (Map.Entry<Integer, String> entry : carsMap.entrySet()) {
+                        if (entry.getValue().equals(carsNames[which])) {
+                            selectedCarId = entry.getKey();
+                        }
                     }
+                    if (selectedCarId > -1) {
+                        selectedCar = carTools.findCarById(selectedCarId);
+                        Log.d("DIALOG", "Selected car: " + selectedCar.toString());
+                        datePickerDialogRent.show();
+                    } else
+                        Log.e("DIALOG", "Error during selecting car.");
+
+                    dialog.dismiss();
                 }
-                if(selectedCarId>-1) {
-                    Car selectedCar = carTools.findCarById(selectedCarId);
-                    Log.d("DIALOG", "Selected car: " + selectedCar.toString());
+            });
+
+            selectCarDialogBuilder.setNegativeButton("Anuluj", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
                 }
-                else
-                    Log.e("DIALOG", "Error during selecting car.");
+            });
 
-                dialog.dismiss();
+            AlertDialog selectCarDialog = selectCarDialogBuilder.create();
+            selectCarDialog.show();
+        } else {
+            Toast.makeText(UserPanelActivity.this, "Brak dostępnych smochodów.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void initialCarsMapAndNames(){
+        carsMap = new HashMap<>();
+        List<Car> listCars = carTools.getAllCars();
+        for (Car car : listCars) {
+            carsMap.put(car.getCarId(), car.getCarName() + " " + car.getCarPrice().toString() + "zł");
+        }
+        carsNames = carsMap.values().toArray(new String[carsMap.values().size()]);
+    }
+
+    private void createNewOrder() {
+        if(orderStartDate!=null && orderEndDate!=null
+                && orderStartDate.compareTo(orderEndDate)<=0
+                && logedUser!=null && selectedCar!=null ) {
+            Log.d("createNewOrder","All input data are correct.");
+            Order order = orderTools.addNewOrder(selectedCar, logedUser, orderStartDate, orderEndDate);
+
+            if(order != null) {
+                Toast.makeText(UserPanelActivity.this, "Nowe zamówienie złożone!", Toast.LENGTH_LONG).show();
             }
-        });
-
-        mBuilder.setNegativeButton("Anuluj", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
+            else {
+                Toast.makeText(UserPanelActivity.this, "Upss! Coś poszło nie tak!", Toast.LENGTH_LONG).show();
             }
-        });
-
-        AlertDialog mDialog = mBuilder.create();
-        mDialog.show();
-
+            selectedCar = null;
+            orderStartDate = null;
+            orderEndDate = null;
+        }
+        else {
+            Toast.makeText(UserPanelActivity.this, "Niepoprawne dane!", Toast.LENGTH_LONG).show();
+        }
     }
 }

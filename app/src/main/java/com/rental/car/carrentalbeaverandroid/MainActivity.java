@@ -55,38 +55,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void click(View view) {
-        switch(view.getId()) {
-            case R.id.logonButton :
+        switch (view.getId()) {
+            case R.id.logonButton:
                 clickLogonButton();
                 break;
         }
     }
 
-    private void clickLogonButton(){
+    private void clickLogonButton() {
 
         EditText emailEdit = findViewById(R.id.emailEdit);
         EditText passwordEdit = findViewById(R.id.passwordEdit);
-        if(!passwordEdit.getText().toString().isEmpty() && !emailEdit.getText().toString().isEmpty())
-        {
-            logedUser = userTools.findUserByLoginAndPassword(emailEdit.getText().toString(), User.hashPassword(passwordEdit.getText().toString())) ;
+        if (!passwordEdit.getText().toString().isEmpty() && !emailEdit.getText().toString().isEmpty()) {
+            logedUser = userTools.findUserByLoginAndPassword(emailEdit.getText().toString(), User.hashPassword(passwordEdit.getText().toString()));
         }
         this.logon();
     }
 
-    private void logon(){
-        if(logedUser!=null) {
+    private void logon() {
+        if (logedUser != null) {
             Log.d("Logon", "Found loged user");
             Intent intent = new Intent(MainActivity.this, UserPanelActivity.class);
             intent.putExtra("loged_user", logedUser);
             startActivity(intent);
-        }
-        else {
+        } else {
             Snackbar.make(findViewById(R.id.logonButton), "Błędny login lub hasło.", Snackbar.LENGTH_LONG)
                     .show();
             List<User> allUsers = userTools.getAllUsers();
-            for(User user : allUsers)
-            {
-                Log.d("DATA",user.getUserId() + " "  +user.getEmail());
+            for (User user : allUsers) {
+                Log.d("DATA", user.getUserId() + " " + user.getEmail());
             }
         }
     }
