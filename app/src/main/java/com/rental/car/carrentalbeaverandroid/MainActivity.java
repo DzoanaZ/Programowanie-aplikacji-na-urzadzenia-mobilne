@@ -7,13 +7,11 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.rental.car.carrentalbeaverandroid.models.User;
 
@@ -67,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void clickLogonButton() {
+    private void clickLogonButton(){
 
         EditText emailEdit = findViewById(R.id.emailEdit);
         EditText passwordEdit = findViewById(R.id.passwordEdit);
