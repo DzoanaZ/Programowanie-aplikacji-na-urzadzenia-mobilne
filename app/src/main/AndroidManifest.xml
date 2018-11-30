@@ -19,8 +19,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UserPanelActivity"></activity>
-        <activity android:name=".SignUp"></activity>
+        <activity android:name=".UserPanelActivity" />
+        <activity android:name=".SignUp" />
+        <activity android:name=".MyOrdersActivity"></activity>
     </application>
 
 </manifest>

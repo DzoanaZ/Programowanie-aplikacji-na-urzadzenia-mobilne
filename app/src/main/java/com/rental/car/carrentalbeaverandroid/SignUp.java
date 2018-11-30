@@ -1,7 +1,9 @@
 package com.rental.car.carrentalbeaverandroid;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -32,6 +34,10 @@ public class SignUp extends Activity {
                     userTools.addNewUser(emailEdit.getText().toString(), passwordEdit.getText().toString());
                     Toast pass = Toast.makeText(SignUp.this, "Rejestracja zakończona sukcesem :)", Toast.LENGTH_SHORT);
                     pass.show();
+                    Log.d("REGISTER", "New user is created.");
+                    Intent intent = new Intent(SignUp.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
                 } else {
                     Toast pass = Toast.makeText(SignUp.this, "Hasła się nie zgadzają", Toast.LENGTH_SHORT);
                     pass.show();

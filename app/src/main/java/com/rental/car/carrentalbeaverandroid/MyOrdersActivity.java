@@ -1,0 +1,38 @@
+package com.rental.car.carrentalbeaverandroid;
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.widget.TextView;
+
+import com.rental.car.carrentalbeaverandroid.models.Order;
+import com.rental.car.carrentalbeaverandroid.models.User;
+
+import java.text.SimpleDateFormat;
+
+public class MyOrdersActivity extends AppCompatActivity {
+
+    private User logedUser;
+    private OrderTools orderTools;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_my_orders);
+
+        logedUser = (User) getIntent().getParcelableExtra("loged_user");
+        orderTools = new OrderTools(this);
+        StringBuilder strBuilder = new StringBuilder();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+
+        for (Order order : orderTools.findOrderByUser(logedUser)) {
+            strBuilder.append("Samochód: " + order.getCar().getCarName())
+                    .append("\nData wypożyczenia: " + dateFormat.format(order.getStartDate()))
+                    .append("\nData zwrotu: " + dateFormat.format(order.getEndDate()))
+                    .append("\nCena za dobę: " + order.getCar().getCarPrice().doubleValue() + "zł")
+                    .append("\n\n");
+        }
+        TextView textView = findViewById(R.id.textView);
+        textView.setText(strBuilder.toString());
+    }
+}

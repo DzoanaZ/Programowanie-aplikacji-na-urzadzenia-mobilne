@@ -14,6 +14,7 @@ import com.rental.car.carrentalbeaverandroid.models.User;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class OrderTools {
 
     /**
      * Convert String in format yyyy-MM-dd to date.
+     *
      * @param input Excpected  in format yyyy-MM-dd.
      * @return Date.
      */
@@ -81,7 +83,7 @@ public class OrderTools {
     }
 
     public List<Order> findOrderByUserId(int userId) {
-        List<Order> ordersList = null;
+        List<Order> ordersList = new ArrayList<>();
         if (userId > 0) {
             DatabaseConfig dbConf = new DatabaseConfig(this.context);
             SQLiteDatabase db = dbConf.getReadableDatabase();
@@ -92,8 +94,10 @@ public class OrderTools {
                     null, null, null, null);
 
             if (cursor != null) {
-                while(cursor.moveToNext()) {
-                    ordersList.add(findOrderById(cursor.getLong(0)));
+                while (cursor.moveToNext()) {
+                    Order temp = findOrderById(cursor.getLong(0));
+                    if (temp != null)
+                        ordersList.add(temp);
                 }
             }
         }
@@ -123,7 +127,7 @@ public class OrderTools {
             fCarID = cursor.getInt(1);
         }
 
-        if(fUserID > -1 && fCarID > -1) {
+        if (fUserID > -1 && fCarID > -1) {
             cursor = db.query("cars",
                     new String[]{"car_id", "car_name", "car_price"},
                     "car_id = ?",
@@ -135,7 +139,7 @@ public class OrderTools {
                 fCar = new Car(cursor.getInt(0), cursor.getString(1), new BigDecimal(cursor.getString(2)));
             }
 
-            if(fCar != null) {
+            if (fCar != null) {
                 cursor = db.query("users",
                         new String[]{"user_id", "user_email", "user_password"},
                         "user_id = ?",
@@ -148,16 +152,16 @@ public class OrderTools {
                 }
             }
 
-            if(fCar !=null && fUser != null) {
-                db.query("orders",
-                        new String[]{"order_start_date", "order_end_date" },
+            if (fCar != null && fUser != null) {
+                cursor = db.query("orders",
+                        new String[]{"order_start_date", "order_end_date"},
                         "order_id = ?",
                         new String[]{String.valueOf(orderID)},
                         null, null, null, null);
 
                 if (cursor != null) {
                     cursor.moveToFirst();
-                    order = new Order((int)orderID, fUser, fCar,
+                    order = new Order((int) orderID, fUser, fCar,
                             OrderTools.convertStringToDate(cursor.getString(0)),
                             OrderTools.convertStringToDate(cursor.getString(1)));
                 }

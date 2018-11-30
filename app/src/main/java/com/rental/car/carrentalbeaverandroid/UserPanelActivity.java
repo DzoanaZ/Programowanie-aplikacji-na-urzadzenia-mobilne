@@ -2,6 +2,7 @@ package com.rental.car.carrentalbeaverandroid;
 
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
@@ -118,6 +119,9 @@ public class UserPanelActivity extends AppCompatActivity {
     }
 
     private void myOrdersButtonClick(Button view) {
+        Intent intent = new Intent(UserPanelActivity.this, MyOrdersActivity.class);
+        intent.putExtra("loged_user", logedUser);
+        startActivity(intent);
     }
 
     public void newOrderButtonClick(Button button) {
