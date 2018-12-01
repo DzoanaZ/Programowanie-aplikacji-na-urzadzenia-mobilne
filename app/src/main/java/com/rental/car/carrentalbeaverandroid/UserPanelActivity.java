@@ -63,18 +63,18 @@ public class UserPanelActivity extends AppCompatActivity {
                 UserPanelActivity.this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                Log.d("DATEPICKER", "Rental date: " + year + "/" + month + "/" + dayOfMonth);
+                Log.d("DATEPICKER", "Rental date: " + year + "/" + (month+1)  + "/" + dayOfMonth);
                 if (year > 0 && month > -1 && dayOfMonth > 0) {
-                    orderStartDate = OrderTools.convertStringToDate(year + "-" + month+1 + "-" + dayOfMonth);
+                    orderStartDate = OrderTools.convertStringToDate(year + "-" + (month+1) + "-" + dayOfMonth);
                 }
             }
         }, rentYear, rentMonth, rentDay);
-        datePickerDialogRent.setTitle("Wybierz datę wypożyczenia");
         datePickerDialogRent.getDatePicker().setMinDate(new Date().getTime());
         datePickerDialogRent.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 if (orderStartDate != null) {
+                    datePickerDialogReturn.setTitle("Wybierz datę zwrotu");
                     datePickerDialogReturn.show();
                 }
             }
@@ -85,9 +85,9 @@ public class UserPanelActivity extends AppCompatActivity {
                 UserPanelActivity.this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                Log.d("DATEPICKER", "Return date: " + year + "/" + month + "/" + dayOfMonth);
+                Log.d("DATEPICKER", "Return date: " + year + "/" + (month+1)  + "/" + dayOfMonth);
                 if (year > 0 && month > -1 && dayOfMonth > 0) {
-                    orderEndDate = OrderTools.convertStringToDate(year + "-" + month+1 + "-" + dayOfMonth);
+                    orderEndDate = OrderTools.convertStringToDate(year + "-" + (month+1) + "-" + dayOfMonth);
                 } else {
                     orderStartDate = null;
                 }
@@ -144,6 +144,7 @@ public class UserPanelActivity extends AppCompatActivity {
                     if (selectedCarId > -1) {
                         selectedCar = carTools.findCarById(selectedCarId);
                         Log.d("DIALOG", "Selected car: " + selectedCar.toString());
+                        datePickerDialogRent.setTitle("Wybierz datę wypożyczenia");
                         datePickerDialogRent.show();
                     } else
                         Log.e("DIALOG", "Error during selecting car.");
