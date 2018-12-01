@@ -33,6 +33,9 @@ public class MyOrdersActivity extends AppCompatActivity {
                     .append("\n\n");
         }
         TextView textView = findViewById(R.id.textView);
-        textView.setText(strBuilder.toString());
+        if (strBuilder.length() > 0)
+            textView.setText(strBuilder.toString());
+        else
+            textView.setText("Brak wypożyczeń na Twoim koncie");
     }
 }

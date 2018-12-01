@@ -70,6 +70,7 @@ public class UserPanelActivity extends AppCompatActivity {
             }
         }, rentYear, rentMonth, rentDay);
         datePickerDialogRent.setTitle("Wybierz datę wypożyczenia");
+        datePickerDialogRent.getDatePicker().setMinDate(new Date().getTime());
         datePickerDialogRent.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
@@ -93,6 +94,7 @@ public class UserPanelActivity extends AppCompatActivity {
             }
         }, rentYear, rentMonth, rentDay);
         datePickerDialogReturn.setTitle("Wybierz datę zwrotu");
+        datePickerDialogReturn.getDatePicker().setMinDate(new Date().getTime());
         datePickerDialogReturn.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
