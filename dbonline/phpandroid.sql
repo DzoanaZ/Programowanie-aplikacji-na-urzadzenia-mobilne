@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Czas generowania: 03 Gru 2018, 13:41
+-- Czas generowania: 04 Gru 2018, 14:22
 -- Wersja serwera: 5.7.23
 -- Wersja PHP: 7.2.10
 
@@ -39,17 +39,22 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `user_name` (`user_name`),
   UNIQUE KEY `user_email` (`user_email`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
+--
+-- Tabela Truncate przed wstawieniem `users`
+--
+
+TRUNCATE TABLE `users`;
 --
 -- Zrzut danych tabeli `users`
 --
 
 INSERT INTO `users` (`user_id`, `user_name`, `user_email`, `user_password`) VALUES
-(1, 'qwerty', 'qwerty', 'gwerty'),
-(2, 'pskocz', 'skoczp@gmail.com', 'qwerty'),
-(3, 'kowalskijan', 'jkowalski@o2.pl', 'qwerty'),
-(4, 'test', 'test', 'test');
+(2, 'pskocz', 'skoczp@gmail.com', 'd8578edf8458ce06fbc5bb76a58c5ca4'),
+(3, 'kowalskijan', 'jkowalski@o2.pl', 'd8578edf8458ce06fbc5bb76a58c5ca4'),
+(4, 'test', 'test@test.pl', 'd8578edf8458ce06fbc5bb76a58c5ca4'),
+(5, 'nowak@nowak.com', 'nowak@nowak.com', 'd8578edf8458ce06fbc5bb76a58c5ca4');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

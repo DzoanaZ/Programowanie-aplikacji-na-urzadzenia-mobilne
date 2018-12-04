@@ -29,7 +29,7 @@ public class UserTools {
     private ProgressDialog pDialog;
 
     //IP 10.0.2.2 is localhost for android emulator
-    //:8383 is the custom port
+
     private static String url_all_users = "http://10.0.2.2/test/users/get_all_users.php";
     private static String url_user_details = "http://10.0.2.2/test/users/get_user_details.php";
     private static String url_create_user = "http://10.0.2.2/test/users/create_user.php";
@@ -61,7 +61,7 @@ public class UserTools {
     }
 
     private boolean isAvailableServer() {
-        if(!availableServer) {
+        if (!availableServer) {
             Toast.makeText(context, "Serwer niedostepny. Sprawdź połączenie z internetem.",
                     Toast.LENGTH_LONG).show();
         }
@@ -71,7 +71,7 @@ public class UserTools {
     public User addNewUser(String name, String email, String password) {
         User user = null;
 
-        if(!isAvailableServer())
+        if (!isAvailableServer())
             return user;
 
         if (!email.isEmpty() && !password.isEmpty()) {
@@ -104,7 +104,7 @@ public class UserTools {
     public User findUserById(int userId) {
         User user = null;
 
-        if(!isAvailableServer())
+        if (!isAvailableServer())
             return user;
 
         if (usersList != null && !usersList.isEmpty()) {
@@ -113,7 +113,6 @@ public class UserTools {
                     user = temp;
                 }
             }
-
         }
         return user;
     }
@@ -121,7 +120,7 @@ public class UserTools {
     public User findUserByLoginAndPassword(String login, String password) {
         User user = null;
 
-        if(!isAvailableServer())
+        if (!isAvailableServer())
             return user;
 
         if (usersList != null && !usersList.isEmpty()) {
@@ -144,7 +143,7 @@ public class UserTools {
         protected void onPreExecute() {
             super.onPreExecute();
             pDialog = new ProgressDialog(context);
-            pDialog.setMessage("Loading users. Please wait...");
+            pDialog.setMessage("Wczytywanie listy użytkowników. Proszę czekać...");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(false);
             pDialog.show();
@@ -159,7 +158,7 @@ public class UserTools {
             // getting JSON string from URL
             JSONObject json = jParser.makeHttpRequest(url_all_users, "GET", params);
 
-            if(json == null) {
+            if (json == null) {
                 availableServer = false;
                 return null;
             }
@@ -217,7 +216,7 @@ public class UserTools {
         protected void onPreExecute() {
             super.onPreExecute();
             pDialog = new ProgressDialog(context);
-            pDialog.setMessage("Creating User..");
+            pDialog.setMessage("Tworzenie uzytkownika..");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(true);
             pDialog.show();
@@ -237,16 +236,16 @@ public class UserTools {
 
             // Building Parameters
             List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("user_name", name));
-            params.add(new BasicNameValuePair("user_email", email));
-            params.add(new BasicNameValuePair("user_password", password));
+            params.add(new BasicNameValuePair(TAG_USER_NAME, name));
+            params.add(new BasicNameValuePair(TAG_USER_EMAIL, email));
+            params.add(new BasicNameValuePair(TAG_USER_PASSWORD, password));
 
             // getting JSON Object
             // Note that create product url accepts POST method
             JSONObject json = jParser.makeHttpRequest(url_create_user,
                     "POST", params);
 
-            if(json == null) {
+            if (json == null) {
                 availableServer = false;
                 return Result.FAILED.getValue();
             }

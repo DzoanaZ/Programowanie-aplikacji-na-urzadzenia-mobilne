@@ -11,7 +11,7 @@ import android.widget.Toast;
 import com.rental.car.carrentalbeaverandroid.models.User;
 
 
-public class SignUp extends Activity {
+public class SignUpActivity extends Activity {
 
     private UserTools userTools;
 
@@ -36,19 +36,19 @@ public class SignUp extends Activity {
                     User newUser = userTools.addNewUser(emailEdit.getText().toString(),emailEdit.getText().toString(), passwordEdit.getText().toString());
 
                     if(newUser !=null ) {
-                        Toast pass = Toast.makeText(SignUp.this, "Rejestracja zakończona sukcesem :)", Toast.LENGTH_SHORT);
+                        Toast pass = Toast.makeText(SignUpActivity.this, "Rejestracja zakończona sukcesem :)", Toast.LENGTH_SHORT);
                         pass.show();
                         Log.d("REGISTER", "New user is created.");
-                        Intent intent = new Intent(SignUp.this, MainActivity.class);
+                        Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
                     }
                 } else {
-                    Toast pass = Toast.makeText(SignUp.this, "Hasła się nie zgadzają", Toast.LENGTH_SHORT);
+                    Toast pass = Toast.makeText(SignUpActivity.this, "Hasła się nie zgadzają", Toast.LENGTH_SHORT);
                     pass.show();
                 }
             } else {
-                Toast pass = Toast.makeText(SignUp.this, "Nie wypełniłeś wszystkich pól", Toast.LENGTH_SHORT);
+                Toast pass = Toast.makeText(SignUpActivity.this, "Nie wypełniłeś wszystkich pól", Toast.LENGTH_SHORT);
                 pass.show();
             }
         }

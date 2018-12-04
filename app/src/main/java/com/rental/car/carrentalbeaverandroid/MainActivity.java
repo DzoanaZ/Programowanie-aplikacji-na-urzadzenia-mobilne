@@ -15,8 +15,6 @@ import android.widget.EditText;
 
 import com.rental.car.carrentalbeaverandroid.models.User;
 
-import org.json.JSONArray;
-
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -61,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                 clickLogonButton();
                 break;
             case R.id.signupButton:
-                Intent i = new Intent(MainActivity.this, SignUp.class);
+                Intent i = new Intent(MainActivity.this, SignUpActivity.class);
                 startActivity(i);
                 break;
         }
