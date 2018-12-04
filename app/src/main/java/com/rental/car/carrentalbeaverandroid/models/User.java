@@ -9,10 +9,12 @@ import java.security.NoSuchAlgorithmException;
 public class User implements Parcelable {
     private int userId;
     private String email;
+    private String name;
     private String password;
 
-    public User(int userId, String email, String password) {
+    public User(int userId, String name, String email, String password) {
         this.userId = userId;
+        this.name = name;
         this.email = email;
         this.password = password;
     }
@@ -37,6 +39,14 @@ public class User implements Parcelable {
 
     public int getUserId() {
         return userId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {

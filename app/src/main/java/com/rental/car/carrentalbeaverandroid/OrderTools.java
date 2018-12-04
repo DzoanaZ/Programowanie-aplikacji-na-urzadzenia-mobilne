@@ -148,7 +148,7 @@ public class OrderTools {
 
                 if (cursor != null) {
                     cursor.moveToFirst();
-                    fUser = new User(cursor.getInt(0), cursor.getString(1), cursor.getString(2));
+                    //fUser = new User(cursor.getInt(0), cursor.getString(1), cursor.getString(2));
                 }
             }
 
