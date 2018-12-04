@@ -2,24 +2,23 @@
 header('Content-Type: application/json');
 $response = array();
 
-if (isset($_POST['user_id']) && isset($_POST['user_name']) && isset($_POST['user_email']) && isset($_POST['user_password'])) {
+if (isset($_POST['car_id']) && isset($_POST['car_name']) && isset($_POST['car_price'])) {
 	
-	$user_id = $_POST['user_id'];
-    $user_name = $_POST['user_name'];
-    $user_email = $_POST['user_email'];
-    $user_password = $_POST['user_password'];
+	$car_id = $_POST['car_id'];
+    $car_name = $_POST['car_name'];
+    $car_price = $_POST['car_price'];
 	
 	require_once '../conf/db_connect.php';
 	$con = new DB_CONNECT();
 	$con = $con->get_connect();
 
-	$result = $con->query("UPDATE users SET user_name = '$user_name', user_email = '$user_email', user_password = '$user_password' WHERE user_id = $user_id");
+	$result = $con->query("UPDATE cars SET car_name = '$car_name', car_price = '$car_price' WHERE car_id = $car_id");
 
 	
 	if ($result) {
         // successfully updated
         $response["success"] = 1;
-        $response["message"] = "User successfully updated.";
+        $response["message"] = "Car successfully updated.";
  
         // echoing JSON response
         echo json_encode($response);
