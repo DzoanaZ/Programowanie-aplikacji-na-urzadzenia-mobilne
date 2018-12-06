@@ -183,12 +183,7 @@ public class UserPanelActivity extends AppCompatActivity {
             Log.d("createNewOrder","All input data are correct.");
             Order order = orderTools.addNewOrder(selectedCar, logedUser, orderStartDate, orderEndDate);
 
-            if(order != null) {
-                Toast.makeText(UserPanelActivity.this, "Nowe zamówienie złożone!", Toast.LENGTH_LONG).show();
-            }
-            else {
-                Toast.makeText(UserPanelActivity.this, "Upss! Coś poszło nie tak!", Toast.LENGTH_LONG).show();
-            }
+
             selectedCar = null;
             orderStartDate = null;
             orderEndDate = null;

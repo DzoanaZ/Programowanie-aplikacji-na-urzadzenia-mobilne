@@ -280,7 +280,7 @@ public class UserTools {
 
     }
 
-    private enum Result {
+    public enum Result {
         SUCCESS("Success"),
         FAILED("Failed");
 
