@@ -1,15 +1,11 @@
 package com.rental.car.carrentalbeaverandroid;
 
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.rental.car.carrentalbeaverandroid.dbconnection.DatabaseConfig;
 import com.rental.car.carrentalbeaverandroid.models.Car;
 import com.rental.car.carrentalbeaverandroid.models.Order;
 import com.rental.car.carrentalbeaverandroid.models.User;
@@ -32,9 +28,11 @@ public class OrderTools {
     private Context context;
     private ProgressDialog pDialog;
 
-    private static String url_all_orders = "http://10.0.2.2/test/orders/get_all_orders.php";
+    private static String url_all_orders = "http://10.0.2.2:8383/test/orders/get_all_orders.php";
     private static String url_order_details = "http://10.0.2.2/test/orders/get_order_details.php";
-    private static String url_create_order = "http://10.0.2.2/test/orders/create_order.php";
+    private static String url_create_order = "http://10.0.2.2:8383/test/orders/create_order.php";
+    private static String url_delete_order = "http://10.0.2.2/test/orders/delete_order.php";
+    private static String url_update_order = "http://10.0.2.2/test/orders/update_order.php";
 
     // JSON Node names
     private static final String TAG_SUCCESS = "success";
@@ -48,9 +46,9 @@ public class OrderTools {
     private boolean availableServer = true;
 
     private JSONArray orders = null;
-    JSONParser jParser = new JSONParser();
+    private JSONParser jParser = new JSONParser();
 
-    List<Order> ordersList = new ArrayList<>();
+    private List<Order> ordersList = new ArrayList<>();
 
     public OrderTools(Context context) {
         this.context = context;
@@ -84,24 +82,40 @@ public class OrderTools {
                 && user != null && user.getUserId() > -1
                 && start != null && end != null
                 && start.compareTo(end) <= 0) {
-
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-
-            String result = null;
             try {
-                result = new CreateOrder().execute(String.valueOf(user.getUserId()), String.valueOf(car.getCarId()), dateFormat.format(start), dateFormat.format(end)).get();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                start = dateFormat.parse(dateFormat.format(start));
+                end = dateFormat.parse(dateFormat.format(end));
 
-            if (result.equals(UserTools.Result.SUCCESS.getValue())) {
 
-                Toast.makeText(context, "Nowe zamówienie złożone!", Toast.LENGTH_LONG).show();
-            } else {
+                String result = null;
+                try {
+                    result = new CreateOrder().execute(String.valueOf(user.getUserId()), String.valueOf(car.getCarId()), dateFormat.format(start), dateFormat.format(end)).get();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                new LoadAllOrders().execute();
+
+                for (Order tmpOrder : ordersList) {
+                    if (tmpOrder.getCar().getCarId() == car.getCarId()
+                            && tmpOrder.getUser().getUserId() == user.getUserId()
+                            && tmpOrder.getStartDate().compareTo(start) == 0
+                            && tmpOrder.getEndDate().compareTo(end) == 0) {
+                        order = tmpOrder;
+                        break;
+                    }
+
+                }
+
+                if (result.equals(UserTools.Result.SUCCESS.getValue())) {
+                    Toast.makeText(context, "Nowe zamówienie złożone!", Toast.LENGTH_LONG).show();
+                } else {
                     Toast.makeText(context, "Upss! Coś poszło nie tak!", Toast.LENGTH_LONG).show();
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
 
         }
@@ -109,96 +123,35 @@ public class OrderTools {
     }
 
     public List<Order> findOrderByUser(User user) {
-        return findOrderByUserId(user != null ? user.getUserId() : -1);
+        return findOrdersByUserId(user != null ? user.getUserId() : -1);
     }
 
-    public List<Order> findOrderByUserId(int userId) {
-        List<Order> ordersList = new ArrayList<>();
-        if (userId > 0) {
-            DatabaseConfig dbConf = new DatabaseConfig(this.context);
-            SQLiteDatabase db = dbConf.getReadableDatabase();
-            Cursor cursor = db.query("orders",
-                    new String[]{"order_id"},
-                    "order_user = ?",
-                    new String[]{String.valueOf(userId)},
-                    null, null, null, null);
-
-            if (cursor != null) {
-                while (cursor.moveToNext()) {
-                    Order temp = findOrderById(cursor.getLong(0));
-                    if (temp != null)
-                        ordersList.add(temp);
+    public List<Order> findOrdersByUserId(int userId) {
+        new LoadAllOrders().execute();
+        List<Order> userOrders = new ArrayList<>();
+        if (userId > -1) {
+            for (Order tmpOrder : ordersList) {
+                if (tmpOrder.getUser() != null && tmpOrder.getUser().getUserId() == userId) {
+                    userOrders.add(tmpOrder);
                 }
             }
         }
-
-        return ordersList;
+        return userOrders;
     }
 
     public Order findOrderById(long orderID) {
-        DatabaseConfig dbConf = new DatabaseConfig(this.context);
-        SQLiteDatabase db = dbConf.getReadableDatabase();
-        int fUserID = -1;
-        int fCarID = -1;
+        new LoadAllOrders().execute();
         Order order = null;
-        Car fCar = null;
-        User fUser = null;
 
-        Cursor cursor = db.query("orders",
-                //new String[]{"order_id", "order_user", "order_car", "order_start_date", "order_end_date" },
-                new String[]{"order_user", "order_car"},
-                "order_id = ?",
-                new String[]{String.valueOf(orderID)},
-                null, null, null, null);
-
-        if (cursor != null) {
-            cursor.moveToFirst();
-            fUserID = cursor.getInt(0);
-            fCarID = cursor.getInt(1);
-        }
-
-        if (fUserID > -1 && fCarID > -1) {
-            cursor = db.query("cars",
-                    new String[]{"car_id", "car_name", "car_price"},
-                    "car_id = ?",
-                    new String[]{String.valueOf(fCarID)},
-                    null, null, null, null);
-
-            if (cursor != null) {
-                cursor.moveToFirst();
-                fCar = new Car(cursor.getInt(0), cursor.getString(1), new BigDecimal(cursor.getString(2)));
-            }
-
-            if (fCar != null) {
-                cursor = db.query("users",
-                        new String[]{"user_id", "user_email", "user_password"},
-                        "user_id = ?",
-                        new String[]{String.valueOf(fUserID)},
-                        null, null, null, null);
-
-                if (cursor != null) {
-                    cursor.moveToFirst();
-                    //fUser = new User(cursor.getInt(0), cursor.getString(1), cursor.getString(2));
-                }
-            }
-
-            if (fCar != null && fUser != null) {
-                cursor = db.query("orders",
-                        new String[]{"order_start_date", "order_end_date"},
-                        "order_id = ?",
-                        new String[]{String.valueOf(orderID)},
-                        null, null, null, null);
-
-                if (cursor != null) {
-                    cursor.moveToFirst();
-                    order = new Order((int) orderID, fUser, fCar,
-                            OrderTools.convertStringToDate(cursor.getString(0)),
-                            OrderTools.convertStringToDate(cursor.getString(1)));
+        if (orderID > -1) {
+            for (Order tmpOrder : ordersList) {
+                if (tmpOrder.getOrderId() == orderID) {
+                    order = tmpOrder;
+                    break;
                 }
             }
         }
 
-        db.close();
         return order;
     }
 
@@ -211,9 +164,9 @@ public class OrderTools {
         protected void onPreExecute() {
             super.onPreExecute();
             pDialog = new ProgressDialog(context);
-            pDialog.setMessage("Tworzenie wypożyczenia..");
+            pDialog.setMessage("Wczytywanie listy samochodów. Proszę czekać...");
             pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
+            pDialog.setCancelable(false);
             pDialog.show();
         }
 
@@ -264,6 +217,9 @@ public class OrderTools {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            finally {
+                pDialog.dismiss();
+            }
 
             return UserTools.Result.FAILED.getValue();
         }
@@ -287,7 +243,7 @@ public class OrderTools {
         protected void onPreExecute() {
             super.onPreExecute();
             pDialog = new ProgressDialog(context);
-            pDialog.setMessage("Wczytywanie listy wypożyczeń. Proszę czekać...");
+            pDialog.setMessage("Wczytywanie listy samochodów. Proszę czekać...");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(false);
             pDialog.show();
@@ -343,6 +299,9 @@ public class OrderTools {
                 e.printStackTrace();
             } catch (ParseException e) {
                 e.printStackTrace();
+            }
+            finally {
+                pDialog.dismiss();
             }
 
             return null;

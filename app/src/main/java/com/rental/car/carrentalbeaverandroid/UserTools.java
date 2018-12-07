@@ -30,9 +30,11 @@ public class UserTools {
 
     //IP 10.0.2.2 is localhost for android emulator
 
-    private static String url_all_users = "http://10.0.2.2/test/users/get_all_users.php";
+    private static String url_all_users = "http://10.0.2.2:8383/test/users/get_all_users.php";
     private static String url_user_details = "http://10.0.2.2/test/users/get_user_details.php";
-    private static String url_create_user = "http://10.0.2.2/test/users/create_user.php";
+    private static String url_create_user = "http://10.0.2.2:8383/test/users/create_user.php";
+    private static String url_delete_user = "http://10.0.2.2/test/users/delete_user.php";
+    private static String url_update_user = "http://10.0.2.2/test/users/update_user.php";
 
     // JSON Node names
     private static final String TAG_SUCCESS = "success";
@@ -45,13 +47,12 @@ public class UserTools {
     private boolean availableServer = true;
 
     private JSONArray users = null;
-    JSONParser jParser = new JSONParser();
+    private JSONParser jParser = new JSONParser();
 
-    List<User> usersList = new ArrayList<>();
+    private List<User> usersList = new ArrayList<>();
 
 
     public UserTools(Context context) {
-
         this.context = context;
         new LoadAllUsers().execute();
     }
@@ -89,8 +90,6 @@ public class UserTools {
             if (result.equals(Result.SUCCESS.getValue())) {
                 new LoadAllUsers().execute();
                 user = findUserByLoginAndPassword(email, password);
-                if (user != null)
-                    usersList.add(user);
             }
         }
         return user;
@@ -111,6 +110,7 @@ public class UserTools {
             for (User temp : usersList) {
                 if (temp.getUserId() == userId) {
                     user = temp;
+                    break;
                 }
             }
         }
@@ -127,6 +127,7 @@ public class UserTools {
             for (User temp : usersList) {
                 if ((temp.getEmail().equals(login) || temp.getName().equals(login)) && temp.getPassword().equals(password)) {
                     user = temp;
+                    break;
                 }
             }
         }

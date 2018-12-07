@@ -24,7 +24,6 @@ public class MyOrdersActivity extends AppCompatActivity {
         StringBuilder strBuilder = new StringBuilder();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-
         for (Order order : orderTools.findOrderByUser(logedUser)) {
             strBuilder.append("Samochód: " + order.getCar().getCarName())
                     .append("\nData wypożyczenia: " + dateFormat.format(order.getStartDate()))
