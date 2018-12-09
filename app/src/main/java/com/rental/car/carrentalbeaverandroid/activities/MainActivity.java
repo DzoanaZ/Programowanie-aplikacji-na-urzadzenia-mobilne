@@ -1,4 +1,4 @@
-package com.rental.car.carrentalbeaverandroid;
+package com.rental.car.carrentalbeaverandroid.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +13,9 @@ import android.view.MenuItem;
 
 import android.widget.EditText;
 
+import com.rental.car.carrentalbeaverandroid.R;
 import com.rental.car.carrentalbeaverandroid.models.User;
+import com.rental.car.carrentalbeaverandroid.tools.UserTools;
 
 import java.util.List;
 
@@ -65,8 +67,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void clickLogonButton(){
-
+    private void clickLogonButton() {
         EditText emailEdit = findViewById(R.id.emailEdit);
         EditText passwordEdit = findViewById(R.id.passwordEdit);
         if (!passwordEdit.getText().toString().isEmpty() && !emailEdit.getText().toString().isEmpty()) {
@@ -81,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, UserPanelActivity.class);
             intent.putExtra("loged_user", logedUser);
             startActivity(intent);
+            finish();
         } else {
             Snackbar.make(findViewById(R.id.logonButton), "Błędny login lub hasło.", Snackbar.LENGTH_LONG)
                     .show();

@@ -1,4 +1,4 @@
-package com.rental.car.carrentalbeaverandroid;
+package com.rental.car.carrentalbeaverandroid.activities;
 
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -9,16 +9,18 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.rental.car.carrentalbeaverandroid.R;
 import com.rental.car.carrentalbeaverandroid.models.Car;
 import com.rental.car.carrentalbeaverandroid.models.Order;
 import com.rental.car.carrentalbeaverandroid.models.User;
+import com.rental.car.carrentalbeaverandroid.tools.CarTools;
+import com.rental.car.carrentalbeaverandroid.tools.OrderTools;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -63,9 +65,9 @@ public class UserPanelActivity extends AppCompatActivity {
                 UserPanelActivity.this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                Log.d("DATEPICKER", "Rental date: " + year + "/" + (month+1)  + "/" + dayOfMonth);
+                Log.d("DATEPICKER", "Rental date: " + year + "/" + (month + 1) + "/" + dayOfMonth);
                 if (year > 0 && month > -1 && dayOfMonth > 0) {
-                    orderStartDate = OrderTools.convertStringToDate(year + "-" + (month+1) + "-" + dayOfMonth);
+                    orderStartDate = OrderTools.convertStringToDate(year + "-" + (month + 1) + "-" + dayOfMonth);
                 }
             }
         }, rentYear, rentMonth, rentDay);
@@ -85,9 +87,9 @@ public class UserPanelActivity extends AppCompatActivity {
                 UserPanelActivity.this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                Log.d("DATEPICKER", "Return date: " + year + "/" + (month+1)  + "/" + dayOfMonth);
+                Log.d("DATEPICKER", "Return date: " + year + "/" + (month + 1) + "/" + dayOfMonth);
                 if (year > 0 && month > -1 && dayOfMonth > 0) {
-                    orderEndDate = OrderTools.convertStringToDate(year + "-" + (month+1) + "-" + dayOfMonth);
+                    orderEndDate = OrderTools.convertStringToDate(year + "-" + (month + 1) + "-" + dayOfMonth);
                 } else {
                     orderStartDate = null;
                 }
@@ -167,7 +169,7 @@ public class UserPanelActivity extends AppCompatActivity {
         }
     }
 
-    private void initialCarsMapAndNames(){
+    private void initialCarsMapAndNames() {
         carsMap = new HashMap<>();
         List<Car> listCars = carTools.getAllCars();
         for (Car car : listCars) {
@@ -177,18 +179,17 @@ public class UserPanelActivity extends AppCompatActivity {
     }
 
     private void createNewOrder() {
-        if(orderStartDate!=null && orderEndDate!=null
-                && orderStartDate.compareTo(orderEndDate)<=0
-                && logedUser!=null && selectedCar!=null ) {
-            Log.d("createNewOrder","All input data are correct.");
+        if (orderStartDate != null && orderEndDate != null
+                && orderStartDate.compareTo(orderEndDate) <= 0
+                && logedUser != null && selectedCar != null) {
+            Log.d("createNewOrder", "All input data are correct.");
             Order order = orderTools.addNewOrder(selectedCar, logedUser, orderStartDate, orderEndDate);
 
 
             selectedCar = null;
             orderStartDate = null;
             orderEndDate = null;
-        }
-        else {
+        } else {
             Toast.makeText(UserPanelActivity.this, "Niepoprawne dane!", Toast.LENGTH_LONG).show();
         }
     }

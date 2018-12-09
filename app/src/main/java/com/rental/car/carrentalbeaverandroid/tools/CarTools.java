@@ -1,18 +1,12 @@
-package com.rental.car.carrentalbeaverandroid;
+package com.rental.car.carrentalbeaverandroid.tools;
 
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.rental.car.carrentalbeaverandroid.dbconnection.DatabaseConfig;
 import com.rental.car.carrentalbeaverandroid.models.Car;
-import com.rental.car.carrentalbeaverandroid.models.User;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -29,14 +23,11 @@ import java.util.concurrent.ExecutionException;
 public class CarTools {
     private Context context;
 
-    // Progress Dialog
-    private ProgressDialog pDialog;
-
     //IP 10.0.2.2 is localhost for android emulator
 
-    private static String url_all_cars = "http://10.0.2.2:8383/test/cars/get_all_cars.php";
+    private static String url_all_cars = "http://10.0.2.2/test/cars/get_all_cars.php";
     private static String url_car_details = "http://10.0.2.2/test/cars/get_car_details.php";
-    private static String url_create_car = "http://10.0.2.2:8383/test/cars/create_car.php";
+    private static String url_create_car = "http://10.0.2.2/test/cars/create_car.php";
     private static String url_delete_car = "http://10.0.2.2/test/cars/delete_car.php";
     private static String url_update_car = "http://10.0.2.2/test/cars/update_car.php";
 
@@ -87,8 +78,8 @@ public class CarTools {
             if (result.equals(UserTools.Result.SUCCESS.getValue())) {
                 new LoadAllCars().execute();
 
-                for(Car tmpCar : carsList) {
-                    if(tmpCar.getCarName().equals(carName) && tmpCar.getCarPrice().compareTo(carPrice)==0) {
+                for (Car tmpCar : carsList) {
+                    if (tmpCar.getCarName().equals(carName) && tmpCar.getCarPrice().compareTo(carPrice) == 0) {
                         car = tmpCar;
                     }
                 }
@@ -97,25 +88,31 @@ public class CarTools {
         return car;
     }
 
-        public Car findCarById ( int rowId){
-            Car car = null;
+    public Car findCarById(int rowId) {
+        Car car = null;
 
-            if(rowId > -1) {
-                for(Car tmpCar : carsList)
-                    if(tmpCar.getCarId() == rowId) {
-                        car = tmpCar;
-                        break;
-                    }
-            }
-
+        if (!isAvailableServer())
             return car;
+
+        if (rowId > -1) {
+            for (Car tmpCar : carsList)
+                if (tmpCar.getCarId() == rowId) {
+                    car = tmpCar;
+                    break;
+                }
         }
 
-        public List<Car> getAllCars() {
-            return carsList;
-        }
+        return car;
+    }
+
+    public List<Car> getAllCars() {
+        isAvailableServer();
+        return carsList;
+    }
 
     class LoadAllCars extends AsyncTask<String, String, String> {
+        // Progress Dialog
+        private ProgressDialog pDialog;
 
         /**
          * Before starting background thread Show Progress Dialog
@@ -123,15 +120,11 @@ public class CarTools {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(context);
-            pDialog.setMessage("Wczytywanie listy samochodów. Proszę czekać...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(false);
-            pDialog.show();
+            pDialog = ProgressDialog.show(context, "Proszę czekać","Wczytywanie listy samochodów");
         }
 
         /**
-         * getting All products from url
+         * getting All cars from url
          */
         protected String doInBackground(String... args) {
             // Building Parameters
@@ -141,7 +134,7 @@ public class CarTools {
 
             if (json == null) {
                 availableServer = false;
-                return null;
+                return UserTools.Result.FAILED.getValue();
             }
             availableServer = true;
 
@@ -171,12 +164,16 @@ public class CarTools {
 
                         carsList.add(car);
                     }
+
+                    return UserTools.Result.SUCCESS.getValue();
+                } else {
+                    return UserTools.Result.FAILED.getValue();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            return null;
+            return UserTools.Result.FAILED.getValue();
         }
 
         protected void onPostExecute(String file_url) {
@@ -188,22 +185,19 @@ public class CarTools {
 
 
     class CreateCars extends AsyncTask<String, String, String> {
-
+        // Progress Dialog
+        private ProgressDialog pDialog;
         /**
          * Before starting background thread Show Progress Dialog
          */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(context);
-            pDialog.setMessage("Tworzenie samochodu..");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
+            pDialog = ProgressDialog.show(context, "Proszę czekać","Tworzenie nowego samochodu.");
         }
 
         /**
-         * Creating product
+         * Creating car
          */
         protected String doInBackground(String... args) {
             if (args.length < 2) {
@@ -255,6 +249,5 @@ public class CarTools {
             // dismiss the dialog once done
             pDialog.dismiss();
         }
-
     }
 }

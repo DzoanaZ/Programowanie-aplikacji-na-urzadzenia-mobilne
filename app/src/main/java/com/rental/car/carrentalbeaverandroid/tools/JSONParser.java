@@ -1,4 +1,4 @@
-package com.rental.car.carrentalbeaverandroid;
+package com.rental.car.carrentalbeaverandroid.tools;
 
 import java.io.BufferedReader;
 import java.io.IOException;

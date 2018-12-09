@@ -1,4 +1,4 @@
-package com.rental.car.carrentalbeaverandroid;
+package com.rental.car.carrentalbeaverandroid.tools;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -26,11 +26,10 @@ import java.util.concurrent.ExecutionException;
 
 public class OrderTools {
     private Context context;
-    private ProgressDialog pDialog;
 
-    private static String url_all_orders = "http://10.0.2.2:8383/test/orders/get_all_orders.php";
+    private static String url_all_orders = "http://10.0.2.2/test/orders/get_all_orders.php";
     private static String url_order_details = "http://10.0.2.2/test/orders/get_order_details.php";
-    private static String url_create_order = "http://10.0.2.2:8383/test/orders/create_order.php";
+    private static String url_create_order = "http://10.0.2.2/test/orders/create_order.php";
     private static String url_delete_order = "http://10.0.2.2/test/orders/delete_order.php";
     private static String url_update_order = "http://10.0.2.2/test/orders/update_order.php";
 
@@ -52,7 +51,13 @@ public class OrderTools {
 
     public OrderTools(Context context) {
         this.context = context;
-        new LoadAllOrders().execute();
+        try {
+            new LoadAllOrders().execute().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -76,8 +81,19 @@ public class OrderTools {
         }
     }
 
+    private boolean isAvailableServer() {
+        if (!availableServer) {
+            Toast.makeText(context, "Serwer niedostepny. Sprawdź połączenie z internetem.",
+                    Toast.LENGTH_LONG).show();
+        }
+        return availableServer;
+    }
+
     public Order addNewOrder(Car car, User user, Date start, Date end) {
         Order order = null;
+        if (!isAvailableServer())
+            return order;
+
         if (car != null && car.getCarId() > -1
                 && user != null && user.getUserId() > -1
                 && start != null && end != null
@@ -89,6 +105,7 @@ public class OrderTools {
 
 
                 String result = null;
+                String result2 = null;
                 try {
                     result = new CreateOrder().execute(String.valueOf(user.getUserId()), String.valueOf(car.getCarId()), dateFormat.format(start), dateFormat.format(end)).get();
                 } catch (ExecutionException e) {
@@ -96,7 +113,14 @@ public class OrderTools {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                new LoadAllOrders().execute();
+
+                if (!isAvailableServer() || !result.equals(UserTools.Result.SUCCESS.getValue()))
+                    return order;
+
+                result2 = new LoadAllOrders().execute().get();
+
+                if (!isAvailableServer() || !result2.equals(UserTools.Result.SUCCESS.getValue()))
+                    return order;
 
                 for (Order tmpOrder : ordersList) {
                     if (tmpOrder.getCar().getCarId() == car.getCarId()
@@ -116,6 +140,10 @@ public class OrderTools {
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
             }
 
         }
@@ -127,8 +155,21 @@ public class OrderTools {
     }
 
     public List<Order> findOrdersByUserId(int userId) {
-        new LoadAllOrders().execute();
+        String result = null;
+        try {
+            result = new LoadAllOrders().execute().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
         List<Order> userOrders = new ArrayList<>();
+
+        if (!isAvailableServer() || !result.equals(UserTools.Result.SUCCESS.getValue()))
+            return userOrders;
+
         if (userId > -1) {
             for (Order tmpOrder : ordersList) {
                 if (tmpOrder.getUser() != null && tmpOrder.getUser().getUserId() == userId) {
@@ -140,8 +181,18 @@ public class OrderTools {
     }
 
     public Order findOrderById(long orderID) {
-        new LoadAllOrders().execute();
+        String result = null;
+        try {
+            result = new LoadAllOrders().execute().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Order order = null;
+
+        if (!isAvailableServer() || !result.equals(UserTools.Result.SUCCESS.getValue()))
+            return order;
 
         if (orderID > -1) {
             for (Order tmpOrder : ordersList) {
@@ -151,11 +202,11 @@ public class OrderTools {
                 }
             }
         }
-
         return order;
     }
 
     class CreateOrder extends AsyncTask<String, String, String> {
+        private ProgressDialog pDialog;
 
         /**
          * Before starting background thread Show Progress Dialog
@@ -163,11 +214,7 @@ public class OrderTools {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(context);
-            pDialog.setMessage("Wczytywanie listy samochodów. Proszę czekać...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(false);
-            pDialog.show();
+            pDialog = ProgressDialog.show(context, "Proszę czekać", "Twożenie nowego wypożyczenia.");
         }
 
         /**
@@ -217,9 +264,6 @@ public class OrderTools {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            finally {
-                pDialog.dismiss();
-            }
 
             return UserTools.Result.FAILED.getValue();
         }
@@ -235,6 +279,7 @@ public class OrderTools {
     }
 
     class LoadAllOrders extends AsyncTask<String, String, String> {
+        private ProgressDialog pDialog;
 
         /**
          * Before starting background thread Show Progress Dialog
@@ -242,11 +287,7 @@ public class OrderTools {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(context);
-            pDialog.setMessage("Wczytywanie listy samochodów. Proszę czekać...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(false);
-            pDialog.show();
+            pDialog = ProgressDialog.show(context, "Proszę czekać", "Wczytywanie listy wypożyczeń.");
         }
 
         /**
@@ -260,7 +301,7 @@ public class OrderTools {
 
             if (json == null) {
                 availableServer = false;
-                return null;
+                return UserTools.Result.FAILED.getValue();
             }
             availableServer = true;
 
@@ -294,23 +335,22 @@ public class OrderTools {
 
                         ordersList.add(new Order(orderId, tmpUser, tmpCar, new SimpleDateFormat("yyyy-MM-dd").parse(startDate), new SimpleDateFormat("yyyy-MM-dd").parse(endDate))); //int orderId, User user, Car car, Date startDate, Date endDate
                     }
+                    return UserTools.Result.SUCCESS.getValue();
+                } else {
+                    return UserTools.Result.FAILED.getValue();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            finally {
-                pDialog.dismiss();
-            }
 
-            return null;
+            return UserTools.Result.FAILED.getValue();
         }
 
         protected void onPostExecute(String file_url) {
             // dismiss the dialog after getting all products
             pDialog.dismiss();
-
         }
     }
 }

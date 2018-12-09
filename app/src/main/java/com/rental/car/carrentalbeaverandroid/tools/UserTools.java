@@ -1,4 +1,4 @@
-package com.rental.car.carrentalbeaverandroid;
+package com.rental.car.carrentalbeaverandroid.tools;
 
 import org.apache.http.NameValuePair;
 
@@ -25,14 +25,11 @@ public class UserTools {
 
     private Context context;
 
-    // Progress Dialog
-    private ProgressDialog pDialog;
-
     //IP 10.0.2.2 is localhost for android emulator
 
-    private static String url_all_users = "http://10.0.2.2:8383/test/users/get_all_users.php";
+    private static String url_all_users = "http://10.0.2.2/test/users/get_all_users.php";
     private static String url_user_details = "http://10.0.2.2/test/users/get_user_details.php";
-    private static String url_create_user = "http://10.0.2.2:8383/test/users/create_user.php";
+    private static String url_create_user = "http://10.0.2.2/test/users/create_user.php";
     private static String url_delete_user = "http://10.0.2.2/test/users/delete_user.php";
     private static String url_update_user = "http://10.0.2.2/test/users/update_user.php";
 
@@ -88,7 +85,18 @@ public class UserTools {
             }
 
             if (result.equals(Result.SUCCESS.getValue())) {
-                new LoadAllUsers().execute();
+                String result2 = null;
+                try {
+                    result2 = new LoadAllUsers().execute().get();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                if (!isAvailableServer() || result.equals(Result.FAILED.getValue()))
+                    return null;
+
                 user = findUserByLoginAndPassword(email, password);
             }
         }
@@ -136,6 +144,8 @@ public class UserTools {
 
 
     class LoadAllUsers extends AsyncTask<String, String, String> {
+        // Progress Dialog
+        private ProgressDialog pDialog;
 
         /**
          * Before starting background thread Show Progress Dialog
@@ -143,11 +153,7 @@ public class UserTools {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(context);
-            pDialog.setMessage("Wczytywanie listy użytkowników. Proszę czekać...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(false);
-            pDialog.show();
+            pDialog = ProgressDialog.show(context, "Proszę czekać", "Wczytywanie listy użytkowników.");
         }
 
         /**
@@ -161,7 +167,7 @@ public class UserTools {
 
             if (json == null) {
                 availableServer = false;
-                return null;
+                return Result.FAILED.getValue();
             }
             availableServer = true;
 
@@ -192,12 +198,14 @@ public class UserTools {
 
                         usersList.add(user);
                     }
+                    return Result.SUCCESS.getValue();
+                } else {
+                    return Result.FAILED.getValue();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-            return null;
+            return Result.FAILED.getValue();
         }
 
         protected void onPostExecute(String file_url) {
@@ -209,6 +217,8 @@ public class UserTools {
 
 
     class CreateUsers extends AsyncTask<String, String, String> {
+        // Progress Dialog
+        private ProgressDialog pDialog;
 
         /**
          * Before starting background thread Show Progress Dialog
@@ -216,11 +226,7 @@ public class UserTools {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(context);
-            pDialog.setMessage("Tworzenie uzytkownika..");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
+            pDialog = ProgressDialog.show(context, "Proszę czekać", "Tworzenie nowego użytkownika.");
         }
 
         /**

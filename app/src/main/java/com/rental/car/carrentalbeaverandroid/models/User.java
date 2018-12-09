@@ -62,10 +62,10 @@ public class User implements Parcelable {
     }
 
     public void setPassword(String password) {
-        this.password=password;
+        this.password = password;
     }
 
-    public static String hashPassword(String passwordToHash){
+    public static String hashPassword(String passwordToHash) {
         String generatedPassword = null;
         try {
             // Create MessageDigest instance for MD5
@@ -77,15 +77,12 @@ public class User implements Parcelable {
             //This bytes[] has bytes in decimal format;
             //Convert it to hexadecimal format
             StringBuilder sb = new StringBuilder();
-            for(int i=0; i< bytes.length ;i++)
-            {
+            for (int i = 0; i < bytes.length; i++) {
                 sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
             }
             //Get complete hashed password in hex format
             generatedPassword = sb.toString();
-        }
-        catch (NoSuchAlgorithmException e)
-        {
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
         return generatedPassword;

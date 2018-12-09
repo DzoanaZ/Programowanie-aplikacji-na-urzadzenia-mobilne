@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -19,9 +19,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UserPanelActivity" />
-        <activity android:name=".SignUpActivity" />
-        <activity android:name=".MyOrdersActivity"></activity>
+        <activity android:name=".activities.UserPanelActivity" />
+        <activity android:name=".activities.SignUpActivity" />
+        <activity android:name=".activities.MyOrdersActivity"></activity>
     </application>
 	
 	<!--  Internet Permissions -->

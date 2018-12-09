@@ -1,11 +1,13 @@
-package com.rental.car.carrentalbeaverandroid;
+package com.rental.car.carrentalbeaverandroid.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.rental.car.carrentalbeaverandroid.R;
 import com.rental.car.carrentalbeaverandroid.models.Order;
 import com.rental.car.carrentalbeaverandroid.models.User;
+import com.rental.car.carrentalbeaverandroid.tools.OrderTools;
 
 import java.text.SimpleDateFormat;
 

@@ -1,4 +1,4 @@
-package com.rental.car.carrentalbeaverandroid;
+package com.rental.car.carrentalbeaverandroid.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,7 +8,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.rental.car.carrentalbeaverandroid.R;
 import com.rental.car.carrentalbeaverandroid.models.User;
+import com.rental.car.carrentalbeaverandroid.tools.UserTools;
 
 
 public class SignUpActivity extends Activity {
@@ -33,16 +35,20 @@ public class SignUpActivity extends Activity {
 
             if (!passwordString.isEmpty() && !emailString.isEmpty()) {
                 if (passwordString.equals(passwordRepeatString)) {
-                    User newUser = userTools.addNewUser(emailEdit.getText().toString(),emailEdit.getText().toString(), passwordEdit.getText().toString());
+                    User newUser = userTools.addNewUser(emailEdit.getText().toString(), emailEdit.getText().toString(), passwordEdit.getText().toString());
 
-                    if(newUser !=null ) {
+                    if (newUser != null) {
                         Toast pass = Toast.makeText(SignUpActivity.this, "Rejestracja zakończona sukcesem :)", Toast.LENGTH_SHORT);
                         pass.show();
                         Log.d("REGISTER", "New user is created.");
                         Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
+                    } else {
+                        Toast pass = Toast.makeText(SignUpActivity.this, "Taki użytkownik już istnieje :(", Toast.LENGTH_SHORT);
+                        pass.show();
                     }
+
                 } else {
                     Toast pass = Toast.makeText(SignUpActivity.this, "Hasła się nie zgadzają", Toast.LENGTH_SHORT);
                     pass.show();
