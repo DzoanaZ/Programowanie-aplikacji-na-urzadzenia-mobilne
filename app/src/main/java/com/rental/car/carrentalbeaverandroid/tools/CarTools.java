@@ -25,11 +25,11 @@ public class CarTools {
 
     //IP 10.0.2.2 is localhost for android emulator
 
-    private static String url_all_cars = "http://10.0.2.2/test/cars/get_all_cars.php";
-    private static String url_car_details = "http://10.0.2.2/test/cars/get_car_details.php";
-    private static String url_create_car = "http://10.0.2.2/test/cars/create_car.php";
-    private static String url_delete_car = "http://10.0.2.2/test/cars/delete_car.php";
-    private static String url_update_car = "http://10.0.2.2/test/cars/update_car.php";
+    private static String url_all_cars = "http://carbeaver.hekko24.pl/test/cars/get_all_cars.php";
+    private static String url_car_details = "http://carbeaver.hekko24.pl/test/cars/get_car_details.php";
+    private static String url_create_car = "http://carbeaver.hekko24.pl/test/cars/create_car.php";
+    private static String url_delete_car = "http://carbeaver.hekko24.pl/test/cars/delete_car.php";
+    private static String url_update_car = "http://carbeaver.hekko24.pl/test/cars/update_car.php";
 
     // JSON Node names
     private static final String TAG_SUCCESS = "success";

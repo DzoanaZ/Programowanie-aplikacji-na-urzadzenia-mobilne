@@ -27,11 +27,11 @@ import java.util.concurrent.ExecutionException;
 public class OrderTools {
     private Context context;
 
-    private static String url_all_orders = "http://10.0.2.2/test/orders/get_all_orders.php";
-    private static String url_order_details = "http://10.0.2.2/test/orders/get_order_details.php";
-    private static String url_create_order = "http://10.0.2.2/test/orders/create_order.php";
-    private static String url_delete_order = "http://10.0.2.2/test/orders/delete_order.php";
-    private static String url_update_order = "http://10.0.2.2/test/orders/update_order.php";
+    private static String url_all_orders = "http://carbeaver.hekko24.pl/test/orders/get_all_orders.php";
+    private static String url_order_details = "http://carbeaver.hekko24.pl/test/orders/get_order_details.php";
+    private static String url_create_order = "http://carbeaver.hekko24.pl/test/orders/create_order.php";
+    private static String url_delete_order = "http://carbeaver.hekko24.pl/test/orders/delete_order.php";
+    private static String url_update_order = "http://carbeaver.hekko24.pl/test/orders/update_order.php";
 
     // JSON Node names
     private static final String TAG_SUCCESS = "success";

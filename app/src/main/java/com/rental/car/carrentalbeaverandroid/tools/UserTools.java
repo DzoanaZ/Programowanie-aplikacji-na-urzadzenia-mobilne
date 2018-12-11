@@ -27,11 +27,11 @@ public class UserTools {
 
     //IP 10.0.2.2 is localhost for android emulator
 
-    private static String url_all_users = "http://10.0.2.2/test/users/get_all_users.php";
-    private static String url_user_details = "http://10.0.2.2/test/users/get_user_details.php";
-    private static String url_create_user = "http://10.0.2.2/test/users/create_user.php";
-    private static String url_delete_user = "http://10.0.2.2/test/users/delete_user.php";
-    private static String url_update_user = "http://10.0.2.2/test/users/update_user.php";
+    private static String url_all_users = "http://carbeaver.hekko24.pl/test/users/get_all_users.php";
+    private static String url_user_details = "http://carbeaver.hekko24.pl/test/users/get_user_details.php";
+    private static String url_create_user = "http://carbeaver.hekko24.pl/test/users/create_user.php";
+    private static String url_delete_user = "http://carbeaver.hekko24.pl/test/users/delete_user.php";
+    private static String url_update_user = "http://carbeaver.hekko24.pl/test/users/update_user.php";
 
     // JSON Node names
     private static final String TAG_SUCCESS = "success";
