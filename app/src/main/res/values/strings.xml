@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">CarBeaver</string>
     <string name="action_settings">Ustawienia</string>
-    <string name="login">Logowanie</string>
-    <string name="signup">Rejestracja</string>
+    <string name="login">LOGOWANIE</string>
+    <string name="signup">REJESTRACJA</string>
     <string name="email">E-mail</string>
     <string name="password">Hasło</string>
     <string name="password_repeat">Powtórz hasło</string>
